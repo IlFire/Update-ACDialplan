@@ -1,17 +1,40 @@
+add <#
+.SYNOPSIS
+    This script update tags for Audiocdes SBC dialplan
+.DESCRIPTION
+    from a start dialplan, the script serach if a prfix exist and change the TAG of the prefix,
+    if a prefix does not exist create a new record in the dial plan
+.EXAMPLE
+    PS C:\> update-dialplan.ps1 -DialPlan ".\resource\dialplan.csv" -ToMigrate ".\resource\tomigrate.csv" -tag "PSTN"
+    
+    the script update the tag value to value "PSTN" of the original dialplan for the lineuri listed in the file tomigrate.csv and 
+    add new line in the dialplan if lineuri dosen't exist
+.INPUTS
+    -dialplan (path of the original dialplan csv file)
+    -ToMigarte (path of the csv file with list of lineuri to modify/add)
+    -tag (the new value of the Tag field)
+.OUTPUTS
+    a new csv file with the modifyed dialplan to import into SBC will be created into .\resource\newdialplan.csv
+.NOTES
+    
+#>
+
+
 param(
+    # Parameter help description
+    [Parameter(Mandatory)]
+    [String]$DPName
     # percorso file del dialplan da modificare
     [Parameter()]
-    [string]$dialplan = ".\resource\dialplan_s4b.csv",
+    [string]$DialPlan = ".\resource\dialplan.csv",
 
     # percorso file dei numeri da modificare/inserire
     [Parameter()]
-    [string]$tomigrate = ".\resource\phonetoteams.csv",
+    [string]$ToMigrate = ".\resource\tomigrate.csv",
 
     # definisce se i nueri vanno migrati verso TEAMS o S4B
     [Parameter()]
-    [validateset ("S4B", "TEAMS")]
-    [string]
-    $dest = "TEAMS"
+    [string]$Tag = "PSTN"
 )
 
 $lineuris = @()
@@ -25,10 +48,10 @@ import-csv -path $tomigrate | ForEach-Object {
     if (!($Found)) {     
 
         $lineuri = New-Object PSObject
-        $lineuri | Add-Member -Type NoteProperty -Name DialPlanName -Value "cattolica"
+        $lineuri | Add-Member -Type NoteProperty -Name DialPlanName -Value $NPName
         $lineuri | Add-Member -Type NoteProperty -Name Name -Value $Basename
         $lineuri | Add-Member -Type NoteProperty -Name Prefix -Value $Basename
-        $lineuri | Add-Member -Type NoteProperty -Name Tag -Value $dest
+        $lineuri | Add-Member -Type NoteProperty -Name Tag -Value $Tag
         $lineuris += $lineuri
         $lineuri = $null 
     }
@@ -42,7 +65,7 @@ import-csv -path $tomigrate | ForEach-Object { $phonetoteams[$_.lineuri] = $_.li
 
 $NewDialPlan |  ForEach-Object {
     if ($phonetoteams.ContainsKey($_.prefix)) {
-        $_.tag = $dest
+        $_.tag = $Tag
     }
     #$_
 }
