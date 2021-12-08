@@ -14,7 +14,6 @@ param(
     $dest = "TEAMS"
 )
 
-
 $lineuris = @()
 $NewDialPlan = @(Import-Csv -path $dialplan )
 import-csv -path $tomigrate | ForEach-Object {
