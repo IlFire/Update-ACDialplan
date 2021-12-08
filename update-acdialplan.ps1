@@ -16,9 +16,7 @@
 .OUTPUTS
     a new csv file with the modifyed dialplan to import into SBC will be created into .\resource\newdialplan.csv
 .NOTES
-    
 #>
-
 
 param(
     # Parameter help description
@@ -59,7 +57,6 @@ import-csv -path $tomigrate | ForEach-Object {
     
 }
 
-
 $phonetoteams = @{}
 import-csv -path $tomigrate | ForEach-Object { $phonetoteams[$_.lineuri] = $_.lineuri }
 
@@ -71,6 +68,5 @@ $NewDialPlan |  ForEach-Object {
     #$_
 }
    
-
 $lineuri = $NewDialPlan + $lineuris
 $lineuri | export-csv -Path ".\resource\newdialplan.csv" -Delimiter "," -NoTypeInformation
