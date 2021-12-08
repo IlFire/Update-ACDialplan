@@ -23,20 +23,8 @@ import-csv -path $tomigrate | ForEach-Object {
 
     if ($NewDialPlan -is [system.array]) { $Found = $NewDialPlan | Where-Object { $NewDialPlan.prefix -eq $BaseName } }
 
-        
-    if ($Found) {
-        $phonetoteams = @{}
-        import-csv -path $tomigrate | ForEach-Object { $phonetoteams[$_.lineuri] = $_.lineuri }
+    if (!($Found)) {     
 
-
-        $NewDialPlan |  ForEach-Object {
-            if ($phonetoteams.ContainsKey($_.prefix)) {
-                $_.tag = $dest
-            }
-            #$_
-        }
-    }
-    else {
         $lineuri = New-Object PSObject
         $lineuri | Add-Member -Type NoteProperty -Name DialPlanName -Value "cattolica"
         $lineuri | Add-Member -Type NoteProperty -Name Name -Value $Basename
@@ -45,7 +33,21 @@ import-csv -path $tomigrate | ForEach-Object {
         $lineuris += $lineuri
         $lineuri = $null 
     }
+    
 }
+
+
+$phonetoteams = @{}
+import-csv -path $tomigrate | ForEach-Object { $phonetoteams[$_.lineuri] = $_.lineuri }
+
+
+$NewDialPlan |  ForEach-Object {
+    if ($phonetoteams.ContainsKey($_.prefix)) {
+        $_.tag = $dest
+    }
+    #$_
+}
+   
 
 $lineuri = $NewDialPlan + $lineuris
 $lineuri | export-csv -Path ".\resource\newdialplan.csv" -Delimiter "," -NoTypeInformation
