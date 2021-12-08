@@ -1,4 +1,4 @@
-add <#
+<#
 .SYNOPSIS
     This script update tags for Audiocdes SBC dialplan
 .DESCRIPTION
@@ -23,7 +23,8 @@ add <#
 param(
     # Parameter help description
     [Parameter(Mandatory)]
-    [String]$DPName
+    [string]$DPName,
+
     # percorso file del dialplan da modificare
     [Parameter()]
     [string]$DialPlan = ".\resource\dialplan.csv",
@@ -48,7 +49,7 @@ import-csv -path $tomigrate | ForEach-Object {
     if (!($Found)) {     
 
         $lineuri = New-Object PSObject
-        $lineuri | Add-Member -Type NoteProperty -Name DialPlanName -Value $NPName
+        $lineuri | Add-Member -Type NoteProperty -Name DialPlanName -Value $DPName
         $lineuri | Add-Member -Type NoteProperty -Name Name -Value $Basename
         $lineuri | Add-Member -Type NoteProperty -Name Prefix -Value $Basename
         $lineuri | Add-Member -Type NoteProperty -Name Tag -Value $Tag
